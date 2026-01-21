@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FiShoppingCart, FiHeart, FiMinus, FiPlus } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
+import QuickAddToWishlist from '../components/QuickAddToWishlist';
 import api from '../utils/axiosInstance';
 import { productEndpoints, cartEndpoints } from '../utils/apiEndpoints';
 import toast from 'react-hot-toast';
@@ -16,6 +17,7 @@ const ProductDetails = () => {
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [showWishlistModal, setShowWishlistModal] = useState(false);
 
   useEffect(() => {
     fetchProductDetails();
@@ -178,8 +180,7 @@ const ProductDetails = () => {
                   removeFromWishlist(product._id);
                   toast.success('Removed from wishlist');
                 } else {
-                  addToWishlist(product);
-                  toast.success('Added to wishlist');
+                  setShowWishlistModal(true);
                 }
               }}
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold transition ${
@@ -195,7 +196,16 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      {/* Reviews Section */}
+      {/* Wishlist Modal */}
+      <QuickAddToWishlist
+        product={product}
+        isOpen={showWishlistModal}
+        onClose={() => setShowWishlistModal(false)}
+        onAddToWishlist={(prod, size) => {
+          addToWishlist(prod, size);
+          toast.success('Added to wishlist');
+        }}
+      />
       <div className="mt-12 pt-12 border-t">
         <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
         <div className="space-y-4">

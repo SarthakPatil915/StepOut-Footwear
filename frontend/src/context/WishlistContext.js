@@ -18,18 +18,41 @@ export const WishlistProvider = ({ children }) => {
     localStorage.setItem('wishlist', JSON.stringify(wishlistItems));
   }, [wishlistItems]);
 
-  const addToWishlist = (product) => {
-    const exists = wishlistItems.find((item) => item._id === product._id);
+  const addToWishlist = (product, selectedSize) => {
+    const exists = wishlistItems.find(
+      (item) => item._id === product._id && item.selectedSize === selectedSize
+    );
     if (!exists) {
-      setWishlistItems([...wishlistItems, product]);
+      setWishlistItems([
+        ...wishlistItems,
+        {
+          ...product,
+          selectedSize: selectedSize || product.sizes?.[0]?.size || 'M',
+        },
+      ]);
     }
   };
 
-  const removeFromWishlist = (productId) => {
-    setWishlistItems(wishlistItems.filter((item) => item._id !== productId));
+  const removeFromWishlist = (productId, size = null) => {
+    if (size) {
+      setWishlistItems(
+        wishlistItems.filter(
+          (item) => !(item._id === productId && item.selectedSize === size)
+        )
+      );
+    } else {
+      setWishlistItems(
+        wishlistItems.filter((item) => item._id !== productId)
+      );
+    }
   };
 
-  const isInWishlist = (productId) => {
+  const isInWishlist = (productId, size = null) => {
+    if (size) {
+      return wishlistItems.some(
+        (item) => item._id === productId && item.selectedSize === size
+      );
+    }
     return wishlistItems.some((item) => item._id === productId);
   };
 

@@ -15,10 +15,10 @@ const Wishlist = () => {
       await api.post(cartEndpoints.ADD_TO_CART, {
         productId: product._id,
         quantity: 1,
-        size: product.sizes?.[0] || 'M',
+        size: product.selectedSize || product.sizes?.[0]?.size || 'M',
       });
       toast.success('Added to cart');
-      removeFromWishlist(product._id);
+      removeFromWishlist(product._id, product.selectedSize);
     } catch (error) {
       toast.error('Failed to add to cart');
     }
@@ -49,6 +49,7 @@ const Wishlist = () => {
             <tr>
               <th className="px-4 py-3 text-left">Product</th>
               <th className="px-4 py-3 text-left">Brand</th>
+              <th className="px-4 py-3 text-left">Size</th>
               <th className="px-4 py-3 text-left">Price</th>
               <th className="px-4 py-3 text-left">Discount</th>
               <th className="px-4 py-3 text-left">Stock</th>
@@ -56,13 +57,14 @@ const Wishlist = () => {
             </tr>
           </thead>
           <tbody>
-            {wishlistItems.map((product) => (
-              <tr key={product._id} className="border-b hover:bg-gray-50">
+            {wishlistItems.map((product, index) => (
+              <tr key={`${product._id}-${product.selectedSize}-${index}`} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-3 cursor-pointer hover:text-orange-500" onClick={() => navigate(`/product/${product._id}`)}>
                   <div className="font-semibold">{product.name}</div>
                   <div className="text-sm text-gray-500">{product.category}</div>
                 </td>
                 <td className="px-4 py-3">{product.brand}</td>
+                <td className="px-4 py-3 font-semibold text-orange-500">{product.selectedSize}</td>
                 <td className="px-4 py-3 font-semibold">₹{product.price}</td>
                 <td className="px-4 py-3">
                   {product.discount > 0 ? (
@@ -94,7 +96,7 @@ const Wishlist = () => {
                   </button>
                   <button
                     onClick={() => {
-                      removeFromWishlist(product._id);
+                      removeFromWishlist(product._id, product.selectedSize);
                       toast.success('Removed from wishlist');
                     }}
                     className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg"

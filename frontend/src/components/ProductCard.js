@@ -1,18 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FiHeart, FiShoppingCart } from 'react-icons/fi';
 import { useWishlist } from '../context/WishlistContext';
+import QuickAddToWishlist from './QuickAddToWishlist';
 
 const ProductCard = ({ product, onClick, onQuickAdd }) => {
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const inWishlist = isInWishlist(product._id);
+  const [showWishlistModal, setShowWishlistModal] = useState(false);
 
   const handleWishlistClick = (e) => {
     e.stopPropagation();
     if (inWishlist) {
       removeFromWishlist(product._id);
     } else {
-      addToWishlist(product);
+      setShowWishlistModal(true);
     }
+  };
+
+  const handleAddToWishlist = (prod, size) => {
+    addToWishlist(prod, size);
+    removeFromWishlist(product._id); // Remove if it was already there with different size
   };
 
   const handleQuickAddClick = (e) => {
@@ -84,6 +91,14 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
       >
         <FiShoppingCart /> Add to Cart
       </button>
+
+      {/* Wishlist Modal */}
+      <QuickAddToWishlist
+        product={product}
+        isOpen={showWishlistModal}
+        onClose={() => setShowWishlistModal(false)}
+        onAddToWishlist={handleAddToWishlist}
+      />
     </div>
   );
 };

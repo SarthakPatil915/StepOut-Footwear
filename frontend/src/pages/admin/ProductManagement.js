@@ -20,7 +20,10 @@ const ProductManagement = () => {
     stock: '',
     brand: '',
     images: [],
+    sizes: [],
   });
+  
+  const availableSizes = ['5', '6', '7', '8', '9', '10', '11', '12', '13', '14'];
 
   useEffect(() => {
     fetchProducts();
@@ -39,6 +42,28 @@ const ProductManagement = () => {
 
   const handleFormChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSizeChange = (size, field, value) => {
+    const updatedSizes = formData.sizes.map((s) =>
+      s.size === size ? { ...s, [field]: parseInt(value) || 0 } : s
+    );
+    setFormData({ ...formData, sizes: updatedSizes });
+  };
+
+  const toggleSize = (size) => {
+    const sizeExists = formData.sizes.find((s) => s.size === size);
+    if (sizeExists) {
+      setFormData({
+        ...formData,
+        sizes: formData.sizes.filter((s) => s.size !== size),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        sizes: [...formData.sizes, { size, stock: 0 }],
+      });
+    }
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -147,6 +172,7 @@ const ProductManagement = () => {
               stock: '',
               brand: '',
               images: [],
+              sizes: [],
             });
           }}
           className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600"
@@ -233,6 +259,40 @@ const ProductManagement = () => {
               rows="4"
               className="w-full px-3 py-2 border rounded-lg"
             ></textarea>
+
+            {/* Sizes Selection */}
+            <div className="w-full">
+              <label className="block text-sm font-semibold mb-3">Available Sizes & Stock</label>
+              <div className="space-y-2">
+                {availableSizes.map((size) => {
+                  const selectedSize = formData.sizes.find((s) => s.size === size);
+                  return (
+                    <div key={size} className="flex items-center gap-3 p-3 border rounded-lg">
+                      <input
+                        type="checkbox"
+                        id={`size-${size}`}
+                        checked={!!selectedSize}
+                        onChange={() => toggleSize(size)}
+                        className="w-4 h-4 cursor-pointer"
+                      />
+                      <label htmlFor={`size-${size}`} className="font-semibold w-12 cursor-pointer">
+                        Size {size}
+                      </label>
+                      {selectedSize && (
+                        <input
+                          type="number"
+                          min="0"
+                          value={selectedSize.stock || 0}
+                          onChange={(e) => handleSizeChange(size, 'stock', e.target.value)}
+                          placeholder="Stock quantity"
+                          className="px-3 py-1 border rounded-lg flex-1"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
 
             {/* Image Upload */}
             <div className="w-full">
