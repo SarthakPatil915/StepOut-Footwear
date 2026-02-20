@@ -50,12 +50,23 @@ const Orders = () => {
     }));
   };
 
-  const handlePrintInvoice = async (order) => {
+  const handleDownloadInvoice = async (order) => {
     try {
-      InvoicePDF.downloadInvoice(order);
+      await InvoicePDF.downloadInvoice(order);
       toast.success('Invoice downloaded successfully!');
     } catch (error) {
+      console.error('Error:', error);
       toast.error('Failed to generate invoice');
+    }
+  };
+
+  const handlePrintInvoice = (order) => {
+    try {
+      InvoicePDF.printInvoice(order);
+      toast.success('Invoice opened for printing!');
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Failed to open invoice for printing');
     }
   };
 
@@ -256,6 +267,12 @@ const Orders = () => {
 
                 {/* Actions */}
                 <div className="flex gap-3 flex-wrap">
+                  <button
+                    onClick={() => handleDownloadInvoice(order)}
+                    className="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition"
+                  >
+                    <FaPrint /> Download Invoice
+                  </button>
                   <button
                     onClick={() => handlePrintInvoice(order)}
                     className="flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition"
