@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FiHeart, FiShoppingCart } from 'react-icons/fi';
 import { useWishlist } from '../context/WishlistContext';
 import QuickAddToWishlist from './QuickAddToWishlist';
+import toast from 'react-hot-toast';
 
 const ProductCard = ({ product, onClick, onQuickAdd }) => {
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
@@ -12,6 +13,7 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
     e.stopPropagation();
     if (inWishlist) {
       removeFromWishlist(product._id);
+      toast.success('Removed from wishlist');
     } else {
       setShowWishlistModal(true);
     }
@@ -19,7 +21,6 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
 
   const handleAddToWishlist = (prod, size) => {
     addToWishlist(prod, size);
-    removeFromWishlist(product._id); // Remove if it was already there with different size
   };
 
   const handleQuickAddClick = (e) => {

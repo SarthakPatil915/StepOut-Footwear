@@ -60,7 +60,7 @@ const Wishlist = () => {
             {wishlistItems.map((product, index) => (
               <tr key={`${product._id}-${product.selectedSize}-${index}`} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-3 cursor-pointer hover:text-orange-500" onClick={() => navigate(`/product/${product._id}`)}>
-                  <div className="font-semibold">{product.name}</div>
+                  <div className="font-semibold">{product.name.length > 30 ? product.name.substring(0, 30) + '...' : product.name}</div>
                   <div className="text-sm text-gray-500">{product.category}</div>
                 </td>
                 <td className="px-4 py-3">{product.brand}</td>

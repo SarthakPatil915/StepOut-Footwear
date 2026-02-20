@@ -15,7 +15,6 @@ const QuickAddToWishlist = ({ product, isOpen, onClose, onAddToWishlist }) => {
     setLoading(true);
     try {
       onAddToWishlist(product, selectedSize);
-      toast.success('Added to wishlist');
       setSelectedSize('');
       onClose();
     } catch (error) {

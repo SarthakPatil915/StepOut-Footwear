@@ -1,13 +1,47 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import QRCode from 'qrcode';
 
-const getInvoiceHTML = (order) => {
+const generateQRCodeData = (order) => {
+  const qrData = {
+    orderNumber: order.orderNumber,
+    orderDate: new Date(order.createdAt).toLocaleDateString(),
+    totalAmount: order.finalAmount,
+    paymentMethod: order.paymentMethod,
+    orderStatus: order.orderStatus,
+    products: order.items.map(item => ({
+      name: item.productName,
+      quantity: item.quantity,
+      size: item.size,
+      price: item.price,
+    })),
+    billing: {
+      name: order.shippingAddress.fullName,
+      address: `${order.shippingAddress.addressLine1}${
+        order.shippingAddress.addressLine2 ? ', ' + order.shippingAddress.addressLine2 : ''
+      }`,
+      city: order.shippingAddress.city,
+      state: order.shippingAddress.state,
+      pincode: order.shippingAddress.pincode,
+      phone: order.shippingAddress.phone,
+    },
+  };
+  return JSON.stringify(qrData);
+};
+
+const getInvoiceHTML = (order, qrCodeImage) => {
   return `
     <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto;">
-      <!-- Header -->
-      <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #f97316; padding-bottom: 15px;">
-        <h1 style="color: #f97316; margin: 0 0 5px 0; font-size: 28px;">STEPOUT ECOMMERCE</h1>
-        <p style="margin: 0; color: #666;">Invoice</p>
+      <!-- Header with QR Code -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 2px solid #f97316; padding-bottom: 15px;">
+        <div>
+          <h1 style="color: #f97316; margin: 0 0 5px 0; font-size: 28px;">STEPOUT ECOMMERCE</h1>
+          <p style="margin: 0; color: #666;">Invoice</p>
+        </div>
+        <div style="text-align: center;">
+          <img src="${qrCodeImage}" alt="QR Code" style="width: 120px; height: 120px; border: 2px solid #f97316; padding: 5px; background: white;" />
+          <p style="margin: 5px 0 0 0; font-size: 10px; color: #666;">Scan for order details</p>
+        </div>
       </div>
 
       <!-- Invoice Details -->
@@ -105,9 +139,20 @@ const getInvoiceHTML = (order) => {
 const InvoicePDF = {
   downloadInvoice: async (order) => {
     try {
+      // Generate QR code first
+      const qrData = generateQRCodeData(order);
+      const qrCodeImage = await QRCode.toDataURL(qrData, {
+        width: 300,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#ffffff',
+        },
+      });
+
       // Create a temporary div to hold the invoice HTML
       const invoiceDiv = document.createElement('div');
-      invoiceDiv.innerHTML = getInvoiceHTML(order);
+      invoiceDiv.innerHTML = getInvoiceHTML(order, qrCodeImage);
       
       // Append to body temporarily for html2canvas to work properly
       invoiceDiv.style.position = 'absolute';
@@ -150,11 +195,22 @@ const InvoicePDF = {
     }
   },
 
-  printInvoice: (order) => {
+  printInvoice: async (order) => {
     try {
+      // Generate QR code first
+      const qrData = generateQRCodeData(order);
+      const qrCodeImage = await QRCode.toDataURL(qrData, {
+        width: 300,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#ffffff',
+        },
+      });
+
       // Create a temporary window for printing
       const printWindow = window.open('', '_blank');
-      const invoiceHTML = getInvoiceHTML(order);
+      const invoiceHTML = getInvoiceHTML(order, qrCodeImage);
       
       printWindow.document.write(`
         <!DOCTYPE html>
