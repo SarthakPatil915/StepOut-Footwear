@@ -54,6 +54,7 @@ exports.addToCart = async (req, res) => {
         size,
         price: product.discountedPrice,
         image: product.images[0],
+        productName: product.name,
       });
     }
 

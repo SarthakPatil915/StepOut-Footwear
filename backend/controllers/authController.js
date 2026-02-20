@@ -225,13 +225,51 @@ exports.deleteAddress = async (req, res) => {
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { $pull: { addresses: { addressId } } },
+      { $pull: { addresses: { _id: addressId } } },
       { new: true }
     );
 
     res.status(200).json({
       success: true,
       message: 'Address deleted successfully',
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Update Address
+exports.updateAddress = async (req, res) => {
+  try {
+    const { addressId } = req.params;
+    const { fullName, phone, addressLine1, addressLine2, city, state, pincode, isDefault } = req.body;
+
+    const user = await User.findById(req.user._id);
+    const addressIndex = user.addresses.findIndex(addr => addr._id.toString() === addressId);
+
+    if (addressIndex === -1) {
+      return res.status(404).json({ success: false, message: 'Address not found' });
+    }
+
+    // Update address
+    user.addresses[addressIndex] = {
+      ...user.addresses[addressIndex],
+      fullName: fullName || user.addresses[addressIndex].fullName,
+      phone: phone || user.addresses[addressIndex].phone,
+      addressLine1: addressLine1 || user.addresses[addressIndex].addressLine1,
+      addressLine2: addressLine2 || user.addresses[addressIndex].addressLine2,
+      city: city || user.addresses[addressIndex].city,
+      state: state || user.addresses[addressIndex].state,
+      pincode: pincode || user.addresses[addressIndex].pincode,
+      isDefault: isDefault !== undefined ? isDefault : user.addresses[addressIndex].isDefault,
+    };
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Address updated successfully',
       user,
     });
   } catch (error) {

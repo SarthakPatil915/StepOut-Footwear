@@ -49,7 +49,7 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ['UPI', 'Card', 'NetBanking', 'COD'],
+      enum: ['UPI', 'COD', 'Razorpay'],
       required: true,
     },
     paymentStatus: {
@@ -59,11 +59,12 @@ const orderSchema = new mongoose.Schema(
     },
     orderStatus: {
       type: String,
-      enum: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'],
+      enum: ['Pending', 'Confirmed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'],
       default: 'Pending',
     },
     razorpayOrderId: String,
     razorpayPaymentId: String,
+    razorpaySignature: String,
     notes: String,
     estimatedDelivery: Date,
   },

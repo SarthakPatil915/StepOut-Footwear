@@ -48,6 +48,7 @@ export const orderEndpoints = {
 export const addressEndpoints = {
   GET_ADDRESSES: `${API_URL}/auth/addresses`,
   ADD_ADDRESS: `${API_URL}/auth/addresses`,
+  UPDATE_ADDRESS: (id) => `${API_URL}/auth/addresses/${id}`,
   DELETE_ADDRESS: (id) => `${API_URL}/auth/addresses/${id}`,
 };
 

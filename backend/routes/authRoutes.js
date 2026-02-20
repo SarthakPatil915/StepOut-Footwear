@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, loginUser, adminLogin, getUserProfile, updateUserProfile, addAddress, getAddresses, deleteAddress, getAllUsers } = require('../controllers/authController');
+const { registerUser, loginUser, adminLogin, getUserProfile, updateUserProfile, addAddress, getAddresses, updateAddress, deleteAddress, getAllUsers } = require('../controllers/authController');
 const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
@@ -16,6 +16,7 @@ router.put('/profile', authenticate, updateUserProfile);
 // Address routes
 router.post('/addresses', authenticate, addAddress);
 router.get('/addresses', authenticate, getAddresses);
+router.put('/addresses/:addressId', authenticate, updateAddress);
 router.delete('/addresses/:addressId', authenticate, deleteAddress);
 
 // Admin routes

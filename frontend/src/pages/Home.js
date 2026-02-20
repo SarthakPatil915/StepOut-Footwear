@@ -1,14 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
 
 const Home = () => {
+  const [hoveredCategory, setHoveredCategory] = useState(null);
+
   const categories = [
-    { name: 'Men', image: 'https://via.placeholder.com/300x300?text=Men+Shoes' },
-    { name: 'Women', image: 'https://via.placeholder.com/300x300?text=Women+Shoes' },
-    { name: 'Sports', image: 'https://via.placeholder.com/300x300?text=Sports+Shoes' },
-    { name: 'Casual', image: 'https://via.placeholder.com/300x300?text=Casual+Shoes' },
-    { name: 'Formal', image: 'https://via.placeholder.com/300x300?text=Formal+Shoes' },
+    {
+      name: 'Men',
+      primaryImage: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop',
+      hoverImage: 'https://images.unsplash.com/photo-1552062407-c551eeda4bae?w=500&h=500&fit=crop',
+      color: 'from-blue-400 to-blue-600'
+    },
+    {
+      name: 'Women',
+      primaryImage: 'https://images.unsplash.com/photo-1543163521-9145f2742f1f?w=500&h=500&fit=crop',
+      hoverImage: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=500&h=500&fit=crop',
+      color: 'from-pink-400 to-pink-600'
+    },
+    {
+      name: 'Sports',
+      primaryImage: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop',
+      hoverImage: 'https://images.unsplash.com/photo-1556821552-5c3ee1ab6e37?w=500&h=500&fit=crop',
+      color: 'from-red-400 to-red-600'
+    },
+    {
+      name: 'Casual',
+      primaryImage: 'https://images.unsplash.com/photo-1525966222134-fceb466e6e85?w=500&h=500&fit=crop',
+      hoverImage: 'https://images.unsplash.com/photo-1595341707802-6b2b62af1c91?w=500&h=500&fit=crop',
+      color: 'from-green-400 to-green-600'
+    },
+    {
+      name: 'Formal',
+      primaryImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop',
+      hoverImage: 'https://images.unsplash.com/photo-1547261741-f0999655eab0?w=500&h=500&fit=crop',
+      color: 'from-purple-400 to-purple-600'
+    },
   ];
 
   return (
@@ -28,23 +55,62 @@ const Home = () => {
       </section>
 
       {/* Categories Section */}
-      <section className="py-12 px-4 max-w-7xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Shop By Category</h2>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+      <section className="py-16 px-4 max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">Shop By Category</h2>
+          <p className="text-lg text-gray-600">Discover our exclusive collection across different styles</p>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {categories.map((category) => (
             <Link
               key={category.name}
               to={`/products?category=${category.name}`}
-              className="group relative overflow-hidden rounded-lg shadow-lg h-64"
+              className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 h-72 cursor-pointer transform hover:scale-105"
+              onMouseEnter={() => setHoveredCategory(category.name)}
+              onMouseLeave={() => setHoveredCategory(null)}
             >
-              <img
-                src={category.image}
-                alt={category.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition flex items-center justify-center">
-                <h3 className="text-white text-2xl font-bold text-center">{category.name}</h3>
+              {/* Image Container */}
+              <div className="relative w-full h-full overflow-hidden bg-gray-200">
+                {/* Primary Image */}
+                <img
+                  src={category.primaryImage}
+                  alt={`${category.name} shoes`}
+                  className={`w-full h-full object-cover transition-opacity duration-500 ${
+                    hoveredCategory === category.name ? 'opacity-0' : 'opacity-100'
+                  }`}
+                />
+                
+                {/* Hover Image */}
+                <img
+                  src={category.hoverImage}
+                  alt={`${category.name} shoes hover`}
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                    hoveredCategory === category.name ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
               </div>
+
+              {/* Overlay with Gradient */}
+              <div className={`absolute inset-0 bg-gradient-to-t ${category.color} transition-opacity duration-300 ${
+                hoveredCategory === category.name ? 'bg-opacity-60' : 'bg-opacity-40'
+              }`}></div>
+
+              {/* Content */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <h3 className="text-white text-3xl font-bold text-center drop-shadow-lg mb-2">
+                  {category.name}
+                </h3>
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <p className="text-white text-sm font-semibold mt-2 drop-shadow-lg">Explore Now</p>
+                  <div className="text-white text-xl mt-2">→</div>
+                </div>
+              </div>
+
+              {/* Shine Effect on Hover */}
+              <div className={`absolute inset-0 bg-white opacity-0 transition-opacity duration-300 ${
+                hoveredCategory === category.name ? 'opacity-10' : ''
+              }`}></div>
             </Link>
           ))}
         </div>
