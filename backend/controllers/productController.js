@@ -118,6 +118,15 @@ exports.updateProduct = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
+    // Calculate discountedPrice if price or discount is being updated
+    let discountedPrice = product.discountedPrice;
+    const finalPrice = price !== undefined ? price : product.price;
+    const finalDiscount = discount !== undefined ? discount : product.discount;
+    
+    if (price !== undefined || discount !== undefined) {
+      discountedPrice = finalPrice - (finalPrice * finalDiscount) / 100;
+    }
+
     product = await Product.findByIdAndUpdate(
       id,
       {
@@ -126,6 +135,7 @@ exports.updateProduct = async (req, res) => {
         category,
         price,
         discount: discount || 0,
+        discountedPrice,
         stock,
         brand,
         images,

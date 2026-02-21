@@ -76,10 +76,16 @@ const ProductManagement = () => {
       reader.onloadend = () => {
         newPreviews.push(reader.result);
         if (newPreviews.length === files.length) {
-          setImagePreviewUrls([...imagePreviewUrls, ...newPreviews]);
+          // Only add new images to preview, don't overwrite existing ones
+          const updatedPreviews = [...imagePreviewUrls, ...newPreviews];
+          setImagePreviewUrls(updatedPreviews);
+          // Only update with new images (data URLs), preserve existing images
+          const updatedImages = editingId 
+            ? [...formData.images, ...newPreviews]
+            : [...formData.images, ...newPreviews];
           setFormData({
             ...formData,
-            images: [...formData.images, ...newPreviews],
+            images: updatedImages,
           });
         }
       };
@@ -89,10 +95,12 @@ const ProductManagement = () => {
 
   // eslint-disable-next-line no-unused-vars
   const removeImage = (index) => {
-    setImagePreviewUrls(imagePreviewUrls.filter((_, i) => i !== index));
+    const updatedPreviews = imagePreviewUrls.filter((_, i) => i !== index);
+    const updatedImages = formData.images.filter((_, i) => i !== index);
+    setImagePreviewUrls(updatedPreviews);
     setFormData({
       ...formData,
-      images: formData.images.filter((_, i) => i !== index),
+      images: updatedImages,
     });
   };
 
@@ -110,6 +118,7 @@ const ProductManagement = () => {
 
       setShowForm(false);
       setEditingId(null);
+      setImagePreviewUrls([]);
       setFormData({
         name: '',
         description: '',
@@ -119,6 +128,7 @@ const ProductManagement = () => {
         stock: '',
         brand: '',
         images: [],
+        sizes: [],
       });
       fetchProducts();
     } catch (error) {
@@ -140,7 +150,18 @@ const ProductManagement = () => {
   };
 
   const handleEdit = (product) => {
-    setFormData(product);
+    // Only set relevant fields to avoid sending MongoDB fields back
+    setFormData({
+      name: product.name,
+      description: product.description,
+      category: product.category,
+      price: product.price,
+      discount: product.discount,
+      stock: product.stock,
+      brand: product.brand,
+      images: product.images || [],
+      sizes: product.sizes || [],
+    });
     setEditingId(product._id);
     setImagePreviewUrls(product.images || []);
     setShowForm(true);
@@ -351,7 +372,19 @@ const ProductManagement = () => {
                 type="button"
                 onClick={() => {
                   setShowForm(false);
+                  setEditingId(null);
                   setImagePreviewUrls([]);
+                  setFormData({
+                    name: '',
+                    description: '',
+                    category: 'Men',
+                    price: '',
+                    discount: '',
+                    stock: '',
+                    brand: '',
+                    images: [],
+                    sizes: [],
+                  });
                 }}
                 className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
               >

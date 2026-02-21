@@ -8,6 +8,8 @@ const getAuthToken = () => {
 // Auth Endpoints
 export const authEndpoints = {
   REGISTER: `${API_URL}/auth/register`,
+  VERIFY_OTP: `${API_URL}/auth/verify-otp`,
+  RESEND_OTP: `${API_URL}/auth/resend-otp`,
   LOGIN: `${API_URL}/auth/login`,
   ADMIN_LOGIN: `${API_URL}/auth/admin-login`,
   GET_PROFILE: `${API_URL}/auth/profile`,

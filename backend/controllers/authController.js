@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { sendOTPEmail, sendWelcomeEmail } = require('../utils/brevoEmail');
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -9,7 +10,12 @@ const generateToken = (id) => {
   });
 };
 
-// Register User
+// Generate Random OTP
+const generateOTP = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+// Register User - Send OTP
 exports.registerUser = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
@@ -22,32 +28,170 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Passwords do not match' });
     }
 
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: 'Email already exists' });
+    // Validate email format
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Please provide a valid email' });
     }
 
-    user = new User({
-      name,
-      email,
-      password,
-      role: 'customer',
-    });
+    // Check if user already exists
+    let user = await User.findOne({ email });
+    
+    if (user && user.isEmailVerified) {
+      return res.status(400).json({ message: 'Email already registered' });
+    }
 
-    await user.save();
+    // Generate OTP
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // OTP valid for 10 minutes
 
-    const token = generateToken(user._id);
+    if (user && !user.isEmailVerified) {
+      // Update existing unverified user
+      user.name = name;
+      user.password = password;
+      user.otp = otp;
+      user.otpExpiry = otpExpiry;
+      await user.save();
+    } else {
+      // Create new user
+      user = new User({
+        name,
+        email,
+        password,
+        role: 'customer',
+        otp,
+        otpExpiry,
+        isEmailVerified: false,
+      });
+      await user.save();
+    }
+
+    // Send OTP via Brevo
+    try {
+      await sendOTPEmail(email, name, otp);
+    } catch (emailError) {
+      console.error('Failed to send OTP email:', emailError.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Registration initiated but failed to send OTP. Please try again.',
+      });
+    }
 
     res.status(201).json({
       success: true,
-      message: 'User registered successfully',
+      message: 'Registration initiated. OTP sent to your email.',
+      email,
+      requiresOTPVerification: true,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Verify OTP and Complete Registration
+exports.verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({ message: 'Email and OTP are required' });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if already verified
+    if (user.isEmailVerified) {
+      return res.status(400).json({ message: 'Email already verified' });
+    }
+
+    // Check if OTP exists and is not expired
+    if (!user.otp || user.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    if (new Date() > user.otpExpiry) {
+      return res.status(400).json({ message: 'OTP has expired. Please register again.' });
+    }
+
+    // Mark email as verified
+    user.isEmailVerified = true;
+    user.otp = null;
+    user.otpExpiry = null;
+    await user.save();
+
+    // Send welcome email
+    try {
+      await sendWelcomeEmail(email, user.name);
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError.message);
+    }
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Email verified successfully. Welcome to StepOut!',
       token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
+        isEmailVerified: user.isEmailVerified,
       },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Resend OTP
+exports.resendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.isEmailVerified) {
+      return res.status(400).json({ message: 'Email already verified' });
+    }
+
+    // Generate new OTP
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+    await user.save();
+
+    // Send OTP via Brevo
+    try {
+      await sendOTPEmail(email, user.name, otp);
+    } catch (emailError) {
+      console.error('Failed to send OTP email:', emailError.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to resend OTP. Please try again.',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP resent to your email',
+      email,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
