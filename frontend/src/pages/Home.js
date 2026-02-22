@@ -8,33 +8,33 @@ const Home = () => {
   const categories = [
     {
       name: 'Men',
-      primaryImage: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop',
-      hoverImage: 'https://images.unsplash.com/photo-1552062407-c551eeda4bae?w=500&h=500&fit=crop',
-      color: 'from-blue-400 to-blue-600'
+      primaryImage: 'https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png',
+      hoverImage: 'https://png.pngtree.com/png-clipart/20241110/original/pngtree-sports-shoes-png-image_16808529.png',
+      // color: 'from-blue-400 to-blue-600'
     },
     {
       name: 'Women',
-      primaryImage: 'https://images.unsplash.com/photo-1543163521-9145f2742f1f?w=500&h=500&fit=crop',
-      hoverImage: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=500&h=500&fit=crop',
-      color: 'from-pink-400 to-pink-600'
+      primaryImage: 'https://png.pngtree.com/png-clipart/20230430/ourmid/pngtree-womens-sneakers-png-image_6746669.png',
+      hoverImage: 'https://png.pngtree.com/png-vector/20230501/ourmid/pngtree-sneakers-running-shoes-color-png-image_7078201.png',
+      // color: 'from-pink-400 to-pink-600'
     },
     {
       name: 'Sports',
-      primaryImage: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop',
-      hoverImage: 'https://images.unsplash.com/photo-1556821552-5c3ee1ab6e37?w=500&h=500&fit=crop',
-      color: 'from-red-400 to-red-600'
+      primaryImage: 'https://static.vecteezy.com/system/resources/previews/035/654/571/non_2x/ai-generated-sports-shoes-isolated-on-transparent-background-free-png.png',
+      hoverImage: 'https://png.pngtree.com/png-clipart/20230506/original/pngtree-fast-running-sneakers-png-image_9145096.png',
+      // color: 'from-red-400 to-red-600'
     },
     {
       name: 'Casual',
-      primaryImage: 'https://images.unsplash.com/photo-1525966222134-fceb466e6e85?w=500&h=500&fit=crop',
-      hoverImage: 'https://images.unsplash.com/photo-1595341707802-6b2b62af1c91?w=500&h=500&fit=crop',
-      color: 'from-green-400 to-green-600'
+      primaryImage: 'https://png.pngtree.com/png-vector/20241224/ourmid/pngtree-blue-sneakers-symbolizing-casual-footwear-png-image_14846340.png',
+      hoverImage: 'https://static.vecteezy.com/system/resources/thumbnails/052/086/320/small_2x/men-s-casual-shoes-with-black-sole-free-png.png',
+      // color: 'from-green-400 to-green-600'
     },
     {
       name: 'Formal',
-      primaryImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop',
-      hoverImage: 'https://images.unsplash.com/photo-1547261741-f0999655eab0?w=500&h=500&fit=crop',
-      color: 'from-purple-400 to-purple-600'
+      primaryImage: 'https://png.pngtree.com/png-vector/20240907/ourmid/pngtree-elegant-blue-leather-oxford-shoes-clipart-illustration-png-image_13783519.png',
+      hoverImage: 'https://png.pngtree.com/png-vector/20231104/ourmid/pngtree-classic-oxford-shoes-png-image_10477594.png',
+      // color: 'from-purple-400 to-purple-600'
     },
   ];
 
@@ -98,12 +98,12 @@ const Home = () => {
 
               {/* Content */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <h3 className="text-white text-3xl font-bold text-center drop-shadow-lg mb-2">
+                <h3 className="text-white [-webkit-text-stroke:1px_black] text-4xl font-bold text-center drop-shadow-lg mb-2">
                   {category.name}
                 </h3>
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <p className="text-white text-sm font-semibold mt-2 drop-shadow-lg">Explore Now</p>
-                  <div className="text-white text-xl mt-2">→</div>
+                  <p className="text-black text-0.5xl font-semibold mt-2 drop-shadow-lg">Explore Now</p>
+                  <div className="text-black text-xl mt-2">→</div>
                 </div>
               </div>
 
