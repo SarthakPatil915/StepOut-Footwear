@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
+import HeroCarousel from '../components/HeroCarousel';
 
 const Home = () => {
   const [hoveredCategory, setHoveredCategory] = useState(null);
@@ -40,19 +41,8 @@ const Home = () => {
 
   return (
     <div>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-16 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4">Welcome to StepOut</h1>
-          <p className="text-xl mb-8">Discover Premium Footwear For Every Step of Your Life</p>
-          <Link
-            to="/products"
-            className="inline-flex items-center gap-2 bg-white text-orange-500 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition"
-          >
-            Shop Now <FiArrowRight />
-          </Link>
-        </div>
-      </section>
+      {/* Hero Carousel Section */}
+      <HeroCarousel />
 
       {/* Categories Section */}
       <section className="py-16 px-4 max-w-7xl mx-auto">
