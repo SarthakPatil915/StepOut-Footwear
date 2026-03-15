@@ -146,18 +146,17 @@ const ProductListing = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
             </div>
           ) : products.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ gridAutoRows: '1fr' }}>
               {products.map((product) => (
-                <div key={product._id}>
-                  <ProductCard 
-                    product={product}
-                    onClick={() => navigate(`/product/${product._id}`)}
-                    onQuickAdd={(product) => {
-                      setSelectedProduct(product);
-                      setIsQuickAddOpen(true);
-                    }}
-                  />
-                </div>
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  onClick={() => navigate(`/product/${product._id}`)}
+                  onQuickAdd={(product) => {
+                    setSelectedProduct(product);
+                    setIsQuickAddOpen(true);
+                  }}
+                />
               ))}
             </div>
           ) : (

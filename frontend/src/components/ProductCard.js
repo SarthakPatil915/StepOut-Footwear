@@ -31,7 +31,7 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 cursor-pointer relative group">
+    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 cursor-pointer relative group flex flex-col h-full">
       <button
         onClick={handleWishlistClick}
         className="absolute top-3 right-3 z-10 bg-white rounded-full p-2 hover:bg-orange-50 transition"
@@ -44,7 +44,7 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
 
       <div 
         onClick={onClick}
-        className="relative mb-4"
+        className="relative mb-4 flex-shrink-0"
       >
         <img
           src={product.images[0] || 'https://via.placeholder.com/300'}
@@ -58,12 +58,12 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
         )}
       </div>
 
-      <div onClick={onClick}>
-        <h3 className="font-semibold text-lg text-gray-800 mb-2 line-clamp-2">
+      <div onClick={onClick} className="flex-grow flex flex-col">
+        <h3 className="font-semibold text-lg text-gray-800 mb-2 h-14 line-clamp-2 overflow-hidden">
           {product.name}
         </h3>
 
-        <p className="text-gray-600 text-sm mb-2">{product.brand}</p>
+        <p className="text-gray-600 text-sm mb-2 h-5 overflow-hidden">{product.brand}</p>
 
         <div className="flex items-center gap-2 mb-2">
           <span className="text-yellow-500">★</span>
