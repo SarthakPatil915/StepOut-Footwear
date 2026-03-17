@@ -10,7 +10,7 @@ const VerifyResetOTP = () => {
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [otp, setOtp] = useState('');
-  const [email, setEmail] = useState(location.state?.email || '');
+  const [email] = useState(location.state?.email || '');
   const [timer, setTimer] = useState(300); // 5 minutes
   const [canResend, setCanResend] = useState(false);
 

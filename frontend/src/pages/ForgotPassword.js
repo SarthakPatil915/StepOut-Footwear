@@ -30,7 +30,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await api.post(authEndpoints.FORGOT_PASSWORD, { email });
+      await api.post(authEndpoints.FORGOT_PASSWORD, { email });
       toast.success('OTP sent to your email');
       
       // Navigate to OTP verification page with email
