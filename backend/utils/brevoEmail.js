@@ -17,13 +17,22 @@ const brevoClient = axios.create({
  * @param {string} recipientEmail - Recipient's email address
  * @param {string} recipientName - Recipient's name
  * @param {string} otp - OTP to send
+ * @param {string} emailType - Type of email: 'verification' or 'Password Reset'
  * @returns {Promise}
  */
-const sendOTPEmail = async (recipientEmail, recipientName, otp) => {
+const sendOTPEmail = async (recipientEmail, recipientName, otp, emailType = 'verification') => {
   try {
     if (!BREVO_API_KEY) {
       throw new Error('BREVO_API_KEY is not configured in environment variables');
     }
+
+    const isPasswordReset = emailType === 'Password Reset';
+    const subject = isPasswordReset ? 'Reset Your Password - StepOut' : 'Verify Your Email - StepOut';
+    const title = isPasswordReset ? 'Password Reset' : 'Email Verification';
+    const message = isPasswordReset
+      ? 'We received a request to reset your password. Please use the OTP below to proceed with resetting your password.'
+      : 'Thank you for signing up with StepOut! To complete your registration, please verify your email address using the OTP below.';
+    const context = isPasswordReset ? 'password reset' : 'verification';
 
     const emailData = {
       sender: {
@@ -36,24 +45,24 @@ const sendOTPEmail = async (recipientEmail, recipientName, otp) => {
           name: recipientName,
         },
       ],
-      subject: 'Verify Your Email - StepOut',
+      subject: subject,
       htmlContent: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
           <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <h1 style="color: #ff9500; text-align: center; margin-bottom: 30px;">StepOut</h1>
             
-            <h2 style="color: #333; text-align: center; margin-bottom: 20px;">Email Verification</h2>
+            <h2 style="color: #333; text-align: center; margin-bottom: 20px;">${title}</h2>
             
             <p style="color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
               Hi <strong>${recipientName}</strong>,
             </p>
             
             <p style="color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
-              Thank you for signing up with StepOut! To complete your registration, please verify your email address using the OTP below.
+              ${message}
             </p>
             
             <div style="background-color: #f0f0f0; padding: 20px; border-radius: 8px; text-align: center; margin: 30px 0;">
-              <p style="color: #999; font-size: 12px; margin-bottom: 10px;">Your verification code:</p>
+              <p style="color: #999; font-size: 12px; margin-bottom: 10px;">Your ${context} code:</p>
               <p style="color: #ff9500; font-size: 36px; font-weight: bold; letter-spacing: 5px; margin: 0;">
                 ${otp}
               </p>
@@ -64,7 +73,7 @@ const sendOTPEmail = async (recipientEmail, recipientName, otp) => {
             </p>
             
             <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 30px;">
-              If you didn't sign up for a StepOut account, please ignore this email.
+              ${isPasswordReset ? 'If you didn\'t request a password reset, please ignore this email.' : 'If you didn\'t sign up for a StepOut account, please ignore this email.'}
             </p>
             
             <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">

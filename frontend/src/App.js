@@ -14,6 +14,9 @@ import ProductListing from './pages/ProductListing';
 import ProductDetails from './pages/ProductDetails';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import VerifyResetOTP from './pages/VerifyResetOTP';
+import ResetPassword from './pages/ResetPassword';
 import Cart from './pages/customer/Cart';
 import Checkout from './pages/customer/Checkout';
 import Orders from './pages/customer/Orders';
@@ -43,6 +46,9 @@ function App() {
                   <Route path="/product/:id" element={<ProductDetails />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/verify-reset-otp" element={<VerifyResetOTP />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
 
                   {/* Customer Routes */}
                   <Route

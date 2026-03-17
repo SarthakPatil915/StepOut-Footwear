@@ -14,6 +14,9 @@ export const authEndpoints = {
   ADMIN_LOGIN: `${API_URL}/auth/admin-login`,
   GET_PROFILE: `${API_URL}/auth/profile`,
   UPDATE_PROFILE: `${API_URL}/auth/profile`,
+  FORGOT_PASSWORD: `${API_URL}/auth/forgot-password`,
+  VERIFY_RESET_OTP: `${API_URL}/auth/verify-reset-otp`,
+  RESET_PASSWORD: `${API_URL}/auth/reset-password`,
 };
 
 // Product Endpoints

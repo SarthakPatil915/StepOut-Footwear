@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, verifyOTP, resendOTP, loginUser, adminLogin, getUserProfile, updateUserProfile, addAddress, getAddresses, updateAddress, deleteAddress, getAllUsers } = require('../controllers/authController');
+const { registerUser, verifyOTP, resendOTP, loginUser, adminLogin, getUserProfile, updateUserProfile, addAddress, getAddresses, updateAddress, deleteAddress, getAllUsers, requestPasswordReset, verifyResetOTP, resetPassword } = require('../controllers/authController');
 const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
@@ -12,6 +12,11 @@ router.post('/resend-otp', resendOTP);
 // Public routes - Login
 router.post('/login', loginUser);
 router.post('/admin-login', adminLogin);
+
+// Public routes - Forgot Password
+router.post('/forgot-password', requestPasswordReset);
+router.post('/verify-reset-otp', verifyResetOTP);
+router.post('/reset-password', resetPassword);
 
 // Protected routes
 router.get('/profile', authenticate, getUserProfile);
