@@ -3,10 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../utils/axiosInstance';
 import { authEndpoints } from '../utils/apiEndpoints';
 import toast from 'react-hot-toast';
+import CaptchaComponent from '../components/CaptchaComponent';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const [email, setEmail] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
@@ -27,6 +29,11 @@ const ForgotPassword = () => {
       return;
     }
 
+    if (!isCaptchaVerified) {
+      toast.error('Please verify the CAPTCHA first');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -37,6 +44,7 @@ const ForgotPassword = () => {
       navigate('/verify-reset-otp', { state: { email } });
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to send OTP');
+      setIsCaptchaVerified(false);
     } finally {
       setLoading(false);
     }
@@ -82,9 +90,11 @@ const ForgotPassword = () => {
             </label>
           </div>
 
+          <CaptchaComponent onVerify={setIsCaptchaVerified} />
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isCaptchaVerified}
             className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 disabled:opacity-50"
           >
             {loading ? 'Sending OTP...' : 'Send OTP'}

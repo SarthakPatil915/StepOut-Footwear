@@ -4,11 +4,13 @@ import { useAuth } from '../context/AuthContext';
 import api from '../utils/axiosInstance';
 import { authEndpoints } from '../utils/apiEndpoints';
 import toast from 'react-hot-toast';
+import CaptchaComponent from '../components/CaptchaComponent';
 
 const Register = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const [step, setStep] = useState('register'); // 'register' or 'verify-otp'
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
@@ -26,6 +28,12 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!isCaptchaVerified) {
+      toast.error('Please verify the CAPTCHA first');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -33,9 +41,11 @@ const Register = () => {
       setEmail(formData.email);
       setStep('verify-otp');
       setOtpTimer(600); // 10 minutes
+      setIsCaptchaVerified(false); // Reset for next session
       toast.success('OTP sent to your email');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Registration failed');
+      setIsCaptchaVerified(false);
     } finally {
       setLoading(false);
     }
@@ -222,9 +232,11 @@ const Register = () => {
             />
           </div>
 
+          <CaptchaComponent onVerify={setIsCaptchaVerified} />
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isCaptchaVerified}
             className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 disabled:opacity-50"
           >
             {loading ? 'Sending OTP...' : 'Continue'}

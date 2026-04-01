@@ -49,6 +49,13 @@ export const orderEndpoints = {
   UPDATE_ORDER_STATUS: (id) => `${API_URL}/orders/${id}/status`,
 };
 
+// CAPTCHA Endpoints
+export const captchaEndpoints = {
+  GENERATE: `${API_URL}/captcha/generate`,
+  GET_IMAGE: (sessionId) => `${API_URL}/captcha/${sessionId}`,
+  VERIFY: `${API_URL}/captcha/verify`,
+};
+
 // Address Endpoints
 export const addressEndpoints = {
   GET_ADDRESSES: `${API_URL}/auth/addresses`,

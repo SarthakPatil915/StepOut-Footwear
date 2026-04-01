@@ -3,11 +3,13 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import api from '../utils/axiosInstance';
 import { authEndpoints } from '../utils/apiEndpoints';
 import toast from 'react-hot-toast';
+import CaptchaComponent from '../components/CaptchaComponent';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -53,6 +55,11 @@ const ResetPassword = () => {
       return;
     }
 
+    if (!isCaptchaVerified) {
+      toast.error('Please verify the CAPTCHA first');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -67,6 +74,7 @@ const ResetPassword = () => {
       navigate('/login');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to reset password');
+      setIsCaptchaVerified(false);
     } finally {
       setLoading(false);
     }
@@ -139,12 +147,14 @@ const ResetPassword = () => {
             </div>
           )}
 
+          <CaptchaComponent onVerify={setIsCaptchaVerified} />
+
           <button
             type="submit"
-            disabled={loading || !formData.password || !formData.confirmPassword}
+            disabled={loading || !isCaptchaVerified}
             className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 disabled:opacity-50"
           >
-            {loading ? 'Changing Password...' : 'Change Password'}
+            {loading ? 'Resetting...' : 'Reset Password'}
           </button>
         </form>
 

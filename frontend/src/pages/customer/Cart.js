@@ -30,26 +30,33 @@ const Cart = () => {
 
   const updateQuantity = async (productId, size, quantity) => {
     try {
+      // Extract ID if productId is an object (populated from backend)
+      const id = typeof productId === 'object' ? productId._id : productId;
+      
       const response = await api.put(cartEndpoints.UPDATE_CART_ITEM, {
-        productId,
+        productId: id,
         size,
         quantity,
       });
       setCart(response.data.cart);
+      toast.success('Quantity updated');
     } catch (error) {
-      toast.error('Failed to update quantity');
+      toast.error(error.response?.data?.message || 'Failed to update quantity');
     }
   };
 
   const removeItem = async (productId, size) => {
     try {
+      // Extract ID if productId is an object (populated from backend)
+      const id = typeof productId === 'object' ? productId._id : productId;
+      
       const response = await api.delete(cartEndpoints.REMOVE_FROM_CART, {
-        data: { productId, size },
+        data: { productId: id, size },
       });
       setCart(response.data.cart);
       toast.success('Item removed');
     } catch (error) {
-      toast.error('Failed to remove item');
+      toast.error(error.response?.data?.message || 'Failed to remove item');
     }
   };
 

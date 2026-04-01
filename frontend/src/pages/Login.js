@@ -4,15 +4,22 @@ import { useAuth } from '../context/AuthContext';
 import api from '../utils/axiosInstance';
 import { authEndpoints } from '../utils/apiEndpoints';
 import toast from 'react-hot-toast';
+import CaptchaComponent from '../components/CaptchaComponent';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  const handleCaptchaVerify = (isVerified) => {
+    console.log('CAPTCHA Verification State Updated:', isVerified);
+    setIsCaptchaVerified(isVerified);
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,6 +27,12 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!isCaptchaVerified) {
+      toast.error('Please verify the CAPTCHA first');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -29,12 +42,18 @@ const Login = () => {
       navigate('/');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
+      setIsCaptchaVerified(false);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDemoAdmin = async () => {
+    if (!isCaptchaVerified) {
+      toast.error('Please verify the CAPTCHA first');
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await api.post(authEndpoints.ADMIN_LOGIN, {
@@ -46,6 +65,7 @@ const Login = () => {
       navigate('/admin/dashboard');
     } catch (error) {
       toast.error('Admin login failed');
+      setIsCaptchaVerified(false);
     } finally {
       setLoading(false);
     }
@@ -84,9 +104,11 @@ const Login = () => {
             />
           </div>
 
+          <CaptchaComponent onVerify={handleCaptchaVerify} />
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isCaptchaVerified}
             className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 disabled:opacity-50"
           >
             {loading ? 'Logging in...' : 'Login'}
@@ -106,7 +128,7 @@ const Login = () => {
           <p className="text-center text-gray-600 mb-4 font-semibold">Demo Login</p>
           <button
             onClick={handleDemoAdmin}
-            disabled={loading}
+            disabled={loading || !isCaptchaVerified}
             className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50"
           >
             Try Admin Demo

@@ -201,11 +201,14 @@ exports.resendOTP = async (req, res) => {
 // Login User
 exports.loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, captchaCode } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Please provide email and password' });
     }
+
+    // CAPTCHA validation is now handled on frontend only
+    // This is for additional security but not blocking
 
     const user = await User.findOne({ email }).select('+password');
 
